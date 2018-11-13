@@ -1,5 +1,6 @@
 package com.alexaskill.handlers;
 
+import com.alexaskill.DynamoDbRepository;
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.IntentRequest;
@@ -18,6 +19,11 @@ public class SendMessageHandler implements RequestHandler {
     @Override
     public Optional<Response> handle(HandlerInput input) {
         String message = ((IntentRequest)(input.getRequest())).getIntent().getSlots().get("message").getValue();
+
+        DynamoDbRepository repository = new DynamoDbRepository();
+        String userId = input.getRequestEnvelope().getSession().getUser().getUserId();
+        repository.persistData(userId, message);
+
         String speechText = "You shared: " + message;
         return input.getResponseBuilder()
                 .withSpeech(speechText)

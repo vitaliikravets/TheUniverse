@@ -10,12 +10,30 @@
 		"BucketName": {
 			"Description": "The S3 bucket where our skill code is stored",
 			"Type": "String",
-			"Default": "the-universe-artifacts"
+			"Default": "the-universe-lambda"
 		},
 		"PackagePath": {
 			"Description": "The Path within the S3 bucket to the zipped node.js package",
 			"Type": "String",
 			"Default": "TheUniverse-1.0-SNAPSHOT-jar-with-dependencies.jar"
+		},
+		"HashKeyElementName" : {
+			"Description" : "HashType PrimaryKey Name",
+			"Type" : "String",
+			"AllowedPattern" : "[a-zA-Z0-9]*",
+			"MinLength": "1",
+			"MaxLength": "2048",
+			"ConstraintDescription" : "must contain only alphanumberic characters",
+			"Default": "group"
+		},
+		"RangeKeyElementName" : {
+			"Description" : "RangeType PrimaryKey Name",
+			"Type" : "String",
+			"AllowedPattern" : "[a-zA-Z0-9]*",
+			"MinLength": "1",
+			"MaxLength": "2048",
+			"ConstraintDescription" : "must contain only alphanumberic characters",
+			"Default": "timestamp"
 		}
 	},
 
@@ -39,7 +57,7 @@
 				},
 				"Path": "/",
 				"Policies": [{
-					"PolicyName": "AlexaSkillCloudWatchLogsAccess",
+					"PolicyName": "AlexaSkillCloudWatchLogsAndDynamoAccess",
 					"PolicyDocument": {
 						"Version": "2012-10-17",
 						"Statement": [{
@@ -48,7 +66,14 @@
 							"Action": [
 								"logs:CreateLogGroup",
 								"logs:CreateLogStream",
-								"logs:PutLogEvents"
+								"logs:PutLogEvents",
+								"dynamodb:BatchGetItem",
+								"dynamodb:GetItem",
+								"dynamodb:Query",
+								"dynamodb:Scan",
+								"dynamodb:BatchWriteItem",
+								"dynamodb:PutItem",
+								"dynamodb:UpdateItem"
 							],
 							"Resource": ["*"]
 						}]
@@ -92,6 +117,27 @@
 				"Action": "lambda:InvokeFunction",
 				"Principal": "alexa-appkit.amazon.com"
 			}
+		},
+		"messagesTable" : {
+			"Type" : "AWS::DynamoDB::Table",
+			"Properties" : {
+				"AttributeDefinitions": [ {
+					"AttributeName" : {"Ref" : "HashKeyElementName"},
+					"AttributeType" : "S"
+				}, {
+					"AttributeName" : {"Ref" : "RangeKeyElementName"},
+					"AttributeType" : "N"
+				}],
+				"KeySchema": [
+					{ "AttributeName": {"Ref" : "HashKeyElementName"}, "KeyType": "HASH" },
+					{ "AttributeName": {"Ref" : "RangeKeyElementName"}, "KeyType": "RANGE" }
+				],
+				"ProvisionedThroughput" : {
+					"ReadCapacityUnits" : "5",
+					"WriteCapacityUnits" : "5"
+				},
+				"TableName" : "TheUniverseMessages"
+			}
 		}
 	},
 	"Outputs": {
@@ -100,6 +146,10 @@
 				"Fn::GetAtt": ["AlexaSkillFunction", "Arn"]
 			},
 			"Description": "Lambda function ARN to be placed in the Amazon Developer Portal"
+		},
+		"TableName" : {
+			"Value" : {"Ref" : "messagesTable"},
+			"Description" : "Table name of the newly created DynamoDB table"
 		}
 	}
 }

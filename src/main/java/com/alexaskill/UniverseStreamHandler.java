@@ -5,9 +5,9 @@ import com.amazon.ask.Skill;
 import com.amazon.ask.SkillStreamHandler;
 import com.amazon.ask.Skills;
 
-class UniverseStreamHandler extends SkillStreamHandler {
+public class UniverseStreamHandler extends SkillStreamHandler {
 
-    UniverseStreamHandler() {
+    public UniverseStreamHandler() {
         super(getSkill());
     }
 

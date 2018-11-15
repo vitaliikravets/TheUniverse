@@ -1,23 +1,33 @@
 package com.alexaskill;
 
+import com.alexaskill.repository.MessagesRepository;
 import com.alexaskill.rules.LocalDynamoDBCreationRule;
+import com.alexaskill.service.EnvironmentService;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class DynamoDbRepositoryTest {
+import static org.mockito.Mockito.mock;
 
-    private DynamoDbRepository dynamoDbRepository = new DynamoDbRepository();
+@RunWith(JUnit4.class)
+public class MessagesRepositoryTest {
 
     @ClassRule
     public static final LocalDynamoDBCreationRule dynamoDB = new LocalDynamoDBCreationRule();
 
+    private MessagesRepository messagesRepository;
+
+    @Before
+    public void before() {
+        this.messagesRepository = new MessagesRepository(mock(EnvironmentService.class));
+    }
+
     @Test
     public void persistData() {
         // when
-        //dynamoDbRepository.persistData("author", "test-message");
+        //messagesRepository.persistData("author", "test-message");
 
         // then
 //        ScanRequest scanRequest = new ScanRequest().withTableName("TheUniverseMessages");

@@ -10,11 +10,11 @@ public class LocalDynamoDBCreationRule extends ExternalResource {
 //    private DynamoDBProxyServer server;
 //    private AmazonDynamoDB amazonDynamoDB;
 //
-//    public LocalDynamoDBCreationRule() {
-//        // This one should be copied during test-compile time. If project's basedir does not contains a folder
-//        // named 'native-libs' please try '$ mvn clean install' from command line first
-//        System.setProperty("sqlite4java.library.path", "native-libs");
-//    }
+    public LocalDynamoDBCreationRule() {
+        // This one should be copied during test-compile time. If project's basedir does not contains a folder
+        // named 'native-libs' please try '$ mvn clean install' from command line first
+        //System.setProperty("sqlite4java.library.path", "native-libs");
+    }
 //
 //    @Override
 //    protected void before() {

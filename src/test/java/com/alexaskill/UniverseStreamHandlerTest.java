@@ -1,32 +1,32 @@
 package com.alexaskill;
 
-import com.amazonaws.services.lambda.runtime.Context;
+import com.alexaskill.rules.LocalDynamoDBCreationRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @RunWith(JUnit4.class)
 public class UniverseStreamHandlerTest {
 
     private Logger logger = LoggerFactory.getLogger(UniverseStreamHandlerTest.class);
 
+    @ClassRule
+    public static final LocalDynamoDBCreationRule dynamoDB = new LocalDynamoDBCreationRule();
+
     private UniverseStreamHandler universeStreamHandler;
 
-    @Mock
-    private Context context;
-
-    @Mock
-    private OutputStream outputStream;
-
     @Before
-    public void before(){
-        this.universeStreamHandler = new UniverseStreamHandler();
+    public void setUp() {
+        //this.universeStreamHandler = new UniverseStreamHandler();
     }
 
     @Test

@@ -1,47 +1,39 @@
-package com.alexaskill;
+package com.alexaskill.repository;
 
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import com.alexaskill.service.EnvironmentService;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.QueryFilter;
-import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.internal.IteratorSupport;
 import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DynamoDbRepository {
+public class MessagesRepository {
 
-    private DynamoDB dynamoDb;
-    private String DYNAMODB_TABLE_NAME = "TheUniverseMessages";
-    private Regions REGION = Regions.EU_WEST_1;
+    private static final String MESSAGES_TABLE_NAME = "TheUniverseMessages";
 
+    private Table messagesTable;
 
-    public DynamoDbRepository() {
-        initDynamoDbClient();
+    @Inject
+    public MessagesRepository(EnvironmentService environmentService) {
+        AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        client.setRegion(environmentService.getAwsRegion());
+        this.messagesTable = new DynamoDB(client).getTable(MESSAGES_TABLE_NAME);
     }
 
     public void persistData(Integer userId, String message) throws ConditionalCheckFailedException {
-        this.dynamoDb.getTable(DYNAMODB_TABLE_NAME)
-                .putItem(
-                        new PutItemSpec().withItem(new Item()
-                                .withString("group", "messages")
-                                .withNumber("timestamp", System.currentTimeMillis())
-                                .withString("message", message)
-                                .withNumber("author", userId)
-                                .withNumberSet("readBy", Collections.singleton(userId))));
-    }
-
-    private void initDynamoDbClient() {
-        AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-        client.setRegion(Region.getRegion(REGION));
-        this.dynamoDb = new DynamoDB(client);
+        this.messagesTable.putItem(
+                new PutItemSpec().withItem(new Item()
+                        .withString("group", "messages")
+                        .withNumber("timestamp", System.currentTimeMillis())
+                        .withString("message", message)
+                        .withNumber("author", userId)
+                        .withNumberSet("readBy", Collections.singleton(userId))));
     }
 
     public String readLatest(Integer userId) {
@@ -59,7 +51,7 @@ public class DynamoDbRepository {
         Set<Number> readBySet = new HashSet<>(record.getNumberSet("readBy"));
         readBySet.add(userId);
         record.withNumberSet("readBy", readBySet);
-        this.dynamoDb.getTable(DYNAMODB_TABLE_NAME).putItem(record);
+        this.messagesTable.putItem(record);
     }
 
     private Item getLatestUnreadRecordOfOtherAuthor(Integer userId) {
@@ -71,7 +63,8 @@ public class DynamoDbRepository {
                 .withScanIndexForward(false)
                 .withQueryFilters(queryFilter)
                 .withMaxResultSize(1);
-        IteratorSupport<Item, QueryOutcome> iterator = this.dynamoDb.getTable(DYNAMODB_TABLE_NAME).query(spec).iterator();
+
+        IteratorSupport<Item, QueryOutcome> iterator = this.messagesTable.query(spec).iterator();
         if(iterator.hasNext()){
             return iterator.next();
         }

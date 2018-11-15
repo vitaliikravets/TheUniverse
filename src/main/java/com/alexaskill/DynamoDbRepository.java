@@ -5,11 +5,16 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.RangeKeyCondition;
+import com.amazonaws.services.dynamodbv2.document.QueryFilter;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.internal.IteratorSupport;
 import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DynamoDbRepository {
 
@@ -22,14 +27,15 @@ public class DynamoDbRepository {
         initDynamoDbClient();
     }
 
-    public PutItemOutcome persistData(String author, String message) throws ConditionalCheckFailedException {
-        return this.dynamoDb.getTable(DYNAMODB_TABLE_NAME)
+    public void persistData(Integer userId, String message) throws ConditionalCheckFailedException {
+        this.dynamoDb.getTable(DYNAMODB_TABLE_NAME)
                 .putItem(
                         new PutItemSpec().withItem(new Item()
                                 .withString("group", "messages")
                                 .withNumber("timestamp", System.currentTimeMillis())
                                 .withString("message", message)
-                                .withString("author", author)));
+                                .withNumber("author", userId)
+                                .withNumberSet("readBy", Collections.singleton(userId))));
     }
 
     private void initDynamoDbClient() {
@@ -38,14 +44,38 @@ public class DynamoDbRepository {
         this.dynamoDb = new DynamoDB(client);
     }
 
-    public String readLatest() {
-        RangeKeyCondition rangeKeyCondition = new RangeKeyCondition("timestamp");
-        rangeKeyCondition.gt(0);
+    public String readLatest(Integer userId) {
+        Item record = getLatestUnreadRecordOfOtherAuthor(userId);
+        if (record == null) {
+            return "Universe is currently silent.";
+        }
+
+        setRecordRead(record, userId);
+
+        return (String) record.get("message");
+    }
+
+    private void setRecordRead(Item record, Integer userId) {
+        Set<Number> readBySet = new HashSet<>(record.getNumberSet("readBy"));
+        readBySet.add(userId);
+        record.withNumberSet("readBy", readBySet);
+        this.dynamoDb.getTable(DYNAMODB_TABLE_NAME).putItem(record);
+    }
+
+    private Item getLatestUnreadRecordOfOtherAuthor(Integer userId) {
+        QueryFilter queryFilter = new QueryFilter("readBy");
+        queryFilter.notContains(userId);
 
         QuerySpec spec = new QuerySpec()
                 .withHashKey("group", "messages")
-                .withRangeKeyCondition(rangeKeyCondition);
+                .withScanIndexForward(false)
+                .withQueryFilters(queryFilter)
+                .withMaxResultSize(1);
+        IteratorSupport<Item, QueryOutcome> iterator = this.dynamoDb.getTable(DYNAMODB_TABLE_NAME).query(spec).iterator();
+        if(iterator.hasNext()){
+            return iterator.next();
+        }
 
-        return (String)this.dynamoDb.getTable(DYNAMODB_TABLE_NAME).query(spec).iterator().next().get("message");
+        return null;
     }
 }

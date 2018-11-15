@@ -56,7 +56,7 @@
 			"slots": {
 				"message": {
 					"name": "message",
-					"value": "bla",
+					"value": "I like oranges",
 					"confirmationStatus": "NONE",
 					"source": "USER"
 				}

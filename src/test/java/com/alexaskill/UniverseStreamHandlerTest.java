@@ -38,7 +38,7 @@ public class UniverseStreamHandlerTest {
         InputStream in = new FileInputStream(initialFile);
 
         // when
-        this.universeStreamHandler.handleRequest(in, outputStream, context);
+        this.universeStreamHandler.handleRequest(in, mock(OutputStream.class), mock(Context.class));
     }
 
     @Test

@@ -5,12 +5,12 @@
 		"FunctionName": {
 			"Description": "Give your Skill Function a Friendly Name",
 			"Type": "String",
-			"Default": "alexa-skill-function"
+			"Default": "the-universe"
 		},
 		"BucketName": {
 			"Description": "The S3 bucket where our skill code is stored",
 			"Type": "String",
-			"Default": "the-universe-lambda"
+			"Default": "the-universe-skill-lambda"
 		},
 		"PackagePath": {
 			"Description": "The Path within the S3 bucket to the zipped node.js package",

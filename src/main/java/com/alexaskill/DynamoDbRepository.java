@@ -20,7 +20,7 @@ public class DynamoDbRepository {
 
     private DynamoDB dynamoDb;
     private String DYNAMODB_TABLE_NAME = "TheUniverseMessages";
-    private Regions REGION = Regions.US_EAST_1;
+    private Regions REGION = Regions.EU_WEST_1;
 
 
     public DynamoDbRepository() {

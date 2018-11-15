@@ -52,7 +52,7 @@ public class DynamoDbRepository {
 
         setRecordRead(record, userId);
 
-        return (String) record.get("message");
+        return "Universe says: " + record.get("message");
     }
 
     private void setRecordRead(Item record, Integer userId) {

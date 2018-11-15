@@ -34,14 +34,6 @@
 			"MaxLength": "2048",
 			"ConstraintDescription" : "must contain only alphanumberic characters",
 			"Default": "timestamp"
-		},
-		"AlexaSkillArn" : {
-			"Description" : "Alexa skill ARN",
-			"Type" : "String",
-			"MinLength": "1",
-			"MaxLength": "2048",
-			"ConstraintDescription" : "must be a valid ARN",
-			"Default": "amzn1.ask.skill.5e635d5e-bd30-4b0a-92fc-165796afe040"
 		}
 	},
 
@@ -124,10 +116,7 @@
 					"Ref": "AlexaSkillFunction"
 				},
 				"Action": "lambda:InvokeFunction",
-				"Principal": "alexa-appkit.amazon.com",
-				"SourceArn": {
-					"Ref": "AlexaSkillArn"
-				}
+				"Principal": "alexa-appkit.amazon.com"
 			}
 		},
 		"messagesTable" : {

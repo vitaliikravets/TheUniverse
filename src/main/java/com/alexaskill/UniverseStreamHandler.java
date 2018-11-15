@@ -5,7 +5,11 @@ import com.amazon.ask.Skill;
 import com.amazon.ask.SkillStreamHandler;
 import com.amazon.ask.Skills;
 
-public class UniverseStreamHandler extends SkillStreamHandler {
+class UniverseStreamHandler extends SkillStreamHandler {
+
+    UniverseStreamHandler() {
+        super(getSkill());
+    }
 
     private static Skill getSkill() {
         return Skills.standard()
@@ -15,12 +19,9 @@ public class UniverseStreamHandler extends SkillStreamHandler {
                         new SendMessageHandler(),
                         new HelpIntentHandler(),
                         new LaunchRequestHandler(),
-                        new SessionEndedRequestHandler())
+                        new SessionEndedRequestHandler(),
+                        new FallbackIntentHandler())
                 .build();
-    }
-
-    public UniverseStreamHandler() {
-        super(getSkill());
     }
 
 }

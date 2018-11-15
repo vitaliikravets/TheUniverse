@@ -17,7 +17,8 @@ public class HelpIntentHandler implements RequestHandler {
 
     @Override
     public Optional<Response> handle(HandlerInput input) {
-        String speechText = "You can ask the Universe \"What's up\" or tell it whatever is on your mind.";
+        String speechText = "You can ask the Universe \"What's up\" or tell it whatever is on your mind, By saying " +
+                "\"Alexa tell Universe the following:\".";
         return input.getResponseBuilder()
                 .withSpeech(speechText)
                 .withSimpleCard("Universe", speechText)

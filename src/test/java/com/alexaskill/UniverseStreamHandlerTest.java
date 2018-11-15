@@ -3,13 +3,13 @@ package com.alexaskill;
 import com.amazonaws.services.lambda.runtime.Context;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnit4.class)
 public class UniverseStreamHandlerTest {
 
     @InjectMocks

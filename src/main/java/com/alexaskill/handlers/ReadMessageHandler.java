@@ -1,5 +1,6 @@
 package com.alexaskill.handlers;
 
+import com.alexaskill.DynamoDbRepository;
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.Response;
@@ -16,10 +17,12 @@ public class ReadMessageHandler implements RequestHandler {
 
     @Override
     public Optional<Response> handle(HandlerInput input) {
-        String speechText = "Our universe is a nice place to be";
+        DynamoDbRepository repository = new DynamoDbRepository();
+        String message = repository.readLatest();
+
         return input.getResponseBuilder()
-                .withSpeech(speechText)
-                .withSimpleCard("Universe", speechText)
+                .withSpeech(message)
+                .withSimpleCard("Universe", message)
                 .build();
     }
 }

@@ -39,12 +39,12 @@ public class MessagesRepository {
     public String readLatest(Integer userId) {
         Item record = getLatestUnreadRecordOfOtherAuthor(userId);
         if (record == null) {
-            return "Universe is currently silent.";
+            return "Endless Universe is currently silent.";
         }
 
         setRecordRead(record, userId);
 
-        return "Universe says: " + record.get("message");
+        return "Endless Universe says: " + record.get("message");
     }
 
     private void setRecordRead(Item record, Integer userId) {

@@ -14,10 +14,10 @@ public class LaunchRequestHandler implements RequestHandler {
     }
 
     public Optional<Response> handle(HandlerInput input) {
-        String speechText = "Welcome to the Universe, you can ask the Universe \"What's up?\"";
+        String speechText = "Welcome to the Endless Universe, you can ask the Endless Universe \"What's up?\"";
         return input.getResponseBuilder()
                 .withSpeech(speechText)
-                .withSimpleCard("Universe", speechText)
+                .withSimpleCard("Endless Universe", speechText)
                 .withReprompt(speechText)
                 .build();
     }

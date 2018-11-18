@@ -33,7 +33,7 @@ public class ReadMessageHandler implements RequestHandler {
 
         return input.getResponseBuilder()
                 .withSpeech(message)
-                .withSimpleCard("Universe", message)
+                .withSimpleCard("Endless Universe", message)
                 .build();
     }
 }

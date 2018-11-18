@@ -1,7 +1,7 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "universe",
+      "invocationName": "endless universe",
       "intents": [
         {
           "name": "AMAZON.FallbackIntent",

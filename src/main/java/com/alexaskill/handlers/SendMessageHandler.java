@@ -37,7 +37,7 @@ public class SendMessageHandler implements RequestHandler {
         String speechText = "You shared: " + message;
         return input.getResponseBuilder()
                 .withSpeech(speechText)
-                .withSimpleCard("Universe", speechText)
+                .withSimpleCard("Endless Universe", speechText)
                 .build();
     }
 }
